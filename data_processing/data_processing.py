@@ -137,4 +137,23 @@ def aggregate(df, interval):
 
     return agg_df
 
-load()
+
+
+def create_training_data(df, seq_len=10, interval=10, directory=None):
+    """
+    Tworzy dane do uczenia.
+
+    df : dataframe z wybranymi featurami
+    seq_len : długość sekwencji, czyli ile zestawów feature'ów
+    interval : co ile minut agregować dane
+    directory : gdzie zapisać dane
+
+    """
+    df = aggregate(df, interval)
+    sets = split(df)
+    sets = scale(*sets)
+
+    suffixes = ['train', 'validation', 'test']
+    for i, set in enumerate(sets):
+        X, Y = make_sequences(set, seq_len)
+        np.savez_compressed(os.path.join(directory, f'data-{suffixes[i]}.npz'), X, Y)
