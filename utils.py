@@ -1,7 +1,7 @@
 import pandas as pd
 import os
 
-feature_desc_df = pd.read_csv('./data/feature_desc.csv', index_col='name')
+feature_desc_df = pd.read_csv('./data_processing/feature_desc.csv', index_col='name')
 
 
 def merge_data(dir_path='data/'):
@@ -53,4 +53,6 @@ def correct_tz_temp_zuz(dir_path='data/'):
 
     temp_zuz.to_csv(dir_path + 'temp_zuz_fixed.csv', index=False)
 
-merge_data()
+if __name__ == '__main__':
+    correct_tz_temp_zuz()
+    merge_data()

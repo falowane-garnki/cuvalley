@@ -1,11 +1,13 @@
 import pandas
 import pandas as pd
 import numpy as np
+import os
 
 from utils import correct_tz_temp_zuz
 from sklearn.preprocessing import StandardScaler
 
-def load(df=None, csv_path=None):
+
+def load(df=None, csv_path=None, main_path=None):
     """
     Ładuje dataframe z featurami i dokleja kolumnę temp_zuz. 
     Trzeba przekazazać df z wybranymi featurami i kolumną 'czas'
@@ -18,15 +20,16 @@ def load(df=None, csv_path=None):
         df = pd.read_csv(csv_path)
     else:
         pass
+    
 
     df['czas'] = pd.to_datetime(df['czas'], utc=True)
     df.set_index('czas', inplace=True)
 
     try:
-        temp_zuz = pd.read_csv('../data/temp_zuz_fixed.csv')
+        temp_zuz = pd.read_csv(os.path.join(main_path, "data", "temp_zuz_fixed.csv"))
     except FileNotFoundError:
         correct_tz_temp_zuz()
-        temp_zuz = pd.read_csv('../data/temp_zuz_fixed.csv')
+        temp_zuz = pd.read_csv(os.path.join(main_path, "data", "temp_zuz_fixed.csv"))
 
     temp_zuz['Czas'] = pd.to_datetime(temp_zuz['Czas'], utc=True)
     temp_zuz.set_index('Czas', inplace=True)
