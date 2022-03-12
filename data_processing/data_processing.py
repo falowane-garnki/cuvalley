@@ -112,21 +112,16 @@ def aggregate(df, interval):
     Uwaga, zaokrąglajcie czas w górę raczej, np: 15:03 -> 15:05
     """
 
-    df.reset_index(inplace=True)
-    assert 'czas' in df.columns
+    agg_df = df.reset_index()
+    assert 'czas' in agg_df.columns
     assert 60 % interval == 0
-    if not type(df['czas']) is pd.datetime:
-        df['czas'] = pd.to_datetime(df['czas'])
+    if not type(agg_df['czas']) is pd.datetime:
+        agg_df['czas'] = pd.to_datetime(agg_df['czas'])
 
-    df['czas'] = df['czas'].dt.round(f'{interval}min')
-    df = df.groupby(['czas']).mean().reset_index()
-    df.set_index('czas', inplace=True)
+    agg_df['czas'] = agg_df['czas'].dt.round(f'{interval}min')
+    agg_df = agg_df.groupby(['czas']).mean().reset_index()
+    agg_df.set_index('czas', inplace=True)
 
-    return df
+    return agg_df
 
-
-df = pd.read_csv('../sample_data/avg_from_2020_10_01_00_00_00_to_2020_10_01_23_59_00', index_col=False)
-df = load(df=df)
-df = aggregate(df, 15)
-print(df.head(1200))
 
