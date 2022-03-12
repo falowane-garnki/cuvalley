@@ -1,3 +1,4 @@
+import pandas
 import pandas as pd
 import numpy as np
 
@@ -111,4 +112,21 @@ def aggregate(df, interval):
     Uwaga, zaokrąglajcie czas w górę raczej, np: 15:03 -> 15:05
     """
 
+    df.reset_index(inplace=True)
+    assert 'czas' in df.columns
+    assert 60 % interval == 0
+    if not type(df['czas']) is pd.datetime:
+        df['czas'] = pd.to_datetime(df['czas'])
+
+    df['czas'] = df['czas'].dt.round(f'{interval}min')
+    df = df.groupby(['czas']).mean().reset_index()
+    df.set_index('czas', inplace=True)
+
     return df
+
+
+df = pd.read_csv('../sample_data/avg_from_2020_10_01_00_00_00_to_2020_10_01_23_59_00', index_col=False)
+df = load(df=df)
+df = aggregate(df, 15)
+print(df.head(1200))
+
