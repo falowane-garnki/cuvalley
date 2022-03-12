@@ -131,6 +131,8 @@ dmypy.json
 # Pyre type checker
 .pyre/
 
+# cusotm
 data/
 .idea/
 sample_data/
+linear_regression/data_processing.py
