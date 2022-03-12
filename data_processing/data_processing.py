@@ -138,6 +138,31 @@ def aggregate(df, interval):
     return agg_df
 
 
+def percent_change(df, features=None):
+    """
+    Zwraca df z procentowymi zmianami w wybranych feature'ach.
+    """
+
+    if features is None:
+        features = df.columns[df.columns != 'temp_zuz']
+
+    df[features] = df[features].pct_change()
+
+    return df
+
+
+def clean_rows(df, features=None):
+    """
+    Usuwa wiersze z nanami w wybranych feature'ach.
+    """
+
+    if features is None:
+        features = df.columns[df.columns != 'temp_zuz']
+
+    df.dropna(subset=features, inplace=True)
+
+    return df
+
 
 def create_training_data(df, seq_len=10, interval=10, directory=None):
     """
