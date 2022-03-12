@@ -1,3 +1,4 @@
+import numpy
 import pandas as pd
 import numpy as np
 import os
@@ -25,7 +26,7 @@ def load(df=None, csv_path=None):
     df.set_index('czas', inplace=True)
 
     try:
-        temp_zuz = pd.read_csv('data/temp_zuz_fixed.csv')
+        temp_zuz = pd.read_csv('../data/temp_zuz_fixed.csv')
     except FileNotFoundError:
         try:
             temp_zuz = pd.read_csv('../data/temp_zuz_fixed.csv')
@@ -83,11 +84,13 @@ def scale(*dfs):
 
     mean = scaler.mean_
     scale = scaler.scale_
+    print(scale)
 
     for df in dfs:
         df[features] = df[features].sub(mean).div(scale)
 
     return [*dfs], mean, scale
+
 
 def make_sequences(df, seq_len=10):
     """
@@ -134,7 +137,6 @@ def aggregate(df, interval):
 
 
 if __name__ == "__main__":
-    df = load(csv_path='../data/data.csv')
-    print(df.head(20))
-    df = aggregate(df, 5)
-    print(df.head(20))
+    df = load(csv_path='../data/avg_from_2022_01_08_00_00_00_to_2022_01_08_23_59_00.csv')
+    df, mean, scale = scale(df)
+    print(type(mean))
