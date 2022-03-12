@@ -156,4 +156,4 @@ def create_training_data(df, seq_len=10, interval=10, directory=None):
     suffixes = ['train', 'validation', 'test']
     for i, set in enumerate(sets):
         X, Y = make_sequences(set, seq_len)
-        np.savez_compressed(os.path.join(directory, f'data-{suffixes[i]}.npz'), X, Y)
+        np.savez_compressed(os.path.join(directory, f'data-{suffixes[i]}.npz'), X=X, Y=Y)
