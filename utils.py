@@ -1,7 +1,7 @@
 import pandas as pd
 import os
 
-feature_desc_df = pd.read_csv('data/feature_desc.csv', index_col='name')
+feature_desc_df = pd.read_csv('./data/feature_desc.csv', index_col='name')
 
 
 def merge_data(dir_path='data/'):
