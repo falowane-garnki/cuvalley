@@ -1,21 +1,17 @@
-import pandas
 import pandas as pd
 import numpy as np
 import os
 from pathlib import Path
 
-from utils import correct_tz_temp_zuz
 from sklearn.preprocessing import StandardScaler
 
 
-def load(df=None, csv_path=None, main_path=None):
+def load(df=None, csv_path=None):
     """
     Ładuje dataframe z featurami i dokleja kolumnę temp_zuz. 
     Trzeba przekazazać df z wybranymi featurami i kolumną 'czas'
     albo path do .csv z tym df.
     """
-    if main_path is None:
-        main_path = Path(os.getcwd()).parent
 
     if (csv_path is None) and (df is None):
         raise ValueError("csv_path albo df musisz podac")
@@ -24,16 +20,14 @@ def load(df=None, csv_path=None, main_path=None):
         df = pd.read_csv(csv_path)
     else:
         pass
-    
 
     df['czas'] = pd.to_datetime(df['czas'], utc=True)
     df.set_index('czas', inplace=True)
 
     try:
-        temp_zuz = pd.read_csv(os.path.join(main_path, "data", "temp_zuz_fixed.csv"))
+        temp_zuz = pd.read_csv('../data/temp_zuz_fixed.csv')
     except FileNotFoundError:
-        correct_tz_temp_zuz()
-        temp_zuz = pd.read_csv(os.path.join(main_path, "data", "temp_zuz_fixed.csv"))
+        raise Exception("musisz odpalić utils -> correct_tz_temp_zuz")
 
     temp_zuz['Czas'] = pd.to_datetime(temp_zuz['Czas'], utc=True)
     temp_zuz.set_index('Czas', inplace=True)
@@ -41,7 +35,7 @@ def load(df=None, csv_path=None, main_path=None):
     df = df.join(temp_zuz['temp_zuz'])
 
     # to powinno dzialac ale czasem nie dziala
-    #assert (~df['temp_zuz'].isnull()).sum() == len(temp_zuz)
+    # assert (~df['temp_zuz'].isnull()).sum() == len(temp_zuz)
 
     return df
 
@@ -57,15 +51,15 @@ def split(df, proportions=(0.7, 0.15, 0.15)):
     n = len(df)
 
     if len(proportions) == 2:
-        break_point = int(proportions[0]*n)
+        break_point = int(proportions[0] * n)
         df1 = df.iloc[0:break_point]
         df2 = df.iloc[break_point:]
 
         return df1, df2
 
     elif len(proportions) == 3:
-        break_point1 = int(proportions[0]*n)
-        break_point2 = int((1-proportions[2])*n)
+        break_point1 = int(proportions[0] * n)
+        break_point2 = int((1 - proportions[2]) * n)
         df1 = df.iloc[0:break_point1]
         df2 = df.iloc[break_point1:break_point2]
         df3 = df.iloc[break_point2:]
@@ -87,9 +81,8 @@ def scale(*dfs):
     mean = scaler.mean_
     scale = scaler.scale_
 
-    for df in dfs: 
+    for df in dfs:
         df[features] = df[features].sub(mean).div(scale)
-
 
     return dfs
 
@@ -103,14 +96,14 @@ def make_sequences(df, seq_len=10):
     """
     assert 'temp_zuz' in df.columns
 
-    indicies = np.arange(0,len(df))[~df['temp_zuz'].isnull()]
-    indicies = indicies[indicies>=seq_len]
+    indicies = np.arange(0, len(df))[~df['temp_zuz'].isnull()]
+    indicies = indicies[indicies >= seq_len]
 
     Y = df['temp_zuz'].iloc[indicies].values
 
     features = df.columns[df.columns != 'temp_zuz']
 
-    X = np.array([np.array(df[features].iloc[i-seq_len:i]) for i in indicies] )
+    X = np.array([np.array(df[features].iloc[i - seq_len:i]) for i in indicies])
 
     assert X.shape[0] == Y.shape[0]
 
@@ -136,24 +129,3 @@ def aggregate(df, interval):
     agg_df.set_index('czas', inplace=True)
 
     return agg_df
-
-
-
-def create_training_data(df, seq_len=10, interval=10, directory=None):
-    """
-    Tworzy dane do uczenia.
-
-    df : dataframe z wybranymi featurami
-    seq_len : długość sekwencji, czyli ile zestawów feature'ów
-    interval : co ile minut agregować dane
-    directory : gdzie zapisać dane
-
-    """
-    df = aggregate(df, interval)
-    sets = split(df)
-    sets = scale(*sets)
-
-    suffixes = ['train', 'validation', 'test']
-    for i, set in enumerate(sets):
-        X, Y = make_sequences(set, seq_len)
-        np.savez_compressed(os.path.join(directory, f'data-{suffixes[i]}.npz'), X=X, Y=Y)
