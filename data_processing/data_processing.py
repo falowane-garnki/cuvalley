@@ -127,7 +127,7 @@ def aggregate(df, interval):
     if not type(agg_df['czas']) is pd.datetime:
         agg_df['czas'] = pd.to_datetime(agg_df['czas'])
 
-    agg_df['czas'] = agg_df['czas'].dt.round(f'{interval}min')
+    agg_df['czas'] = agg_df['czas'].dt.ceil(f'{interval}min')
     agg_df = agg_df.groupby(['czas']).mean().reset_index()
     agg_df.set_index('czas', inplace=True)
 
@@ -136,6 +136,6 @@ def aggregate(df, interval):
 
 if __name__ == "__main__":
     df = load(csv_path='../data/data.csv')
-    print(df.head(10))
+    print(df.head(20))
     df = aggregate(df, 5)
-    print(df.head(10))
+    print(df.head(20))
