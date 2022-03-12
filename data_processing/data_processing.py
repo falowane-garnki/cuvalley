@@ -2,6 +2,7 @@ import pandas
 import pandas as pd
 import numpy as np
 import os
+from pathlib import Path
 
 from sklearn.preprocessing import StandardScaler
 
@@ -12,6 +13,8 @@ def load(df=None, csv_path=None, main_path=None):
     Trzeba przekazazać df z wybranymi featurami i kolumną 'czas'
     albo path do .csv z tym df.
     """
+    if main_path is None:
+        main_path = Path(os.getcwd()).parent
     if (csv_path is None) and (df is None):
         raise ValueError("csv_path albo df musisz podac")
 
