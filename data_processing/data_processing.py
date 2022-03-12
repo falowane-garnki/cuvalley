@@ -25,9 +25,12 @@ def load(df=None, csv_path=None):
     df.set_index('czas', inplace=True)
 
     try:
-        temp_zuz = pd.read_csv('../data/temp_zuz_fixed.csv')
+        temp_zuz = pd.read_csv('data/temp_zuz_fixed.csv')
     except FileNotFoundError:
-        raise Exception("musisz odpalić utils -> correct_tz_temp_zuz")
+        try:
+            temp_zuz = pd.read_csv('../data/temp_zuz_fixed.csv')
+        except FileNotFoundError:
+            raise Exception("temp_zuz_fixed.csv not found ")
 
     temp_zuz['Czas'] = pd.to_datetime(temp_zuz['Czas'], utc=True)
     temp_zuz.set_index('Czas', inplace=True)
@@ -129,3 +132,10 @@ def aggregate(df, interval):
     agg_df.set_index('czas', inplace=True)
 
     return agg_df
+
+
+if __name__ == "__main__":
+    df = load(csv_path='../data/data.csv')
+    print(df.head(10))
+    df = aggregate(df, 5)
+    print(df.head(10))
