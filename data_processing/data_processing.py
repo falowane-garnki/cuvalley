@@ -129,7 +129,3 @@ def aggregate(df, interval):
     agg_df.set_index('czas', inplace=True)
 
     return agg_df
-
-
-if __name__ == "__main__":
-    load(csv_path='../data/data.csv')

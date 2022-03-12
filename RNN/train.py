@@ -18,9 +18,9 @@ dataset_name = 'test1'
 
 def train(dataset_name):
 
-    with open(f'train_data/{dataset_name}-t.pickle', 'rb') as pickle_in:
+    with open(f'train_data/{dataset_name}-train.pickle', 'rb') as pickle_in:
         train_x, train_y = pickle.load(pickle_in)
-    with open(f'train_data/{dataset_name}-v.pickle', 'rb') as pickle_in:
+    with open(f'train_data/{dataset_name}-val.pickle', 'rb') as pickle_in:
         val_x, val_y = pickle.load(pickle_in)
 
 
