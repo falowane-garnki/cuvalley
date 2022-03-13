@@ -17,10 +17,6 @@ przetwarzania danych, które trafią do wyszkolonego wcześniej modelu
 pip install -r requirements.txt
 ```
 
-
-
-## Opis pozostałych plików
-- folder *linear regression* zawiera notebooki w których testowaliśmy kolejne modele, może nie działać prawidłowo ze względu na zmiany w ścieżkach
  
 # Autorzy
 Wojciech Jasiński
