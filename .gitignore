@@ -132,7 +132,8 @@ dmypy.json
 .pyre/
 
 # cusotm
-data/
+data/*
+!PUT_DATA_HERE
 .idea/
 sample_data/
 linear_regression/data_processing.py
