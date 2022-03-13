@@ -127,7 +127,7 @@ def aggregate(df, interval):
     assert 'czas' in agg_df.columns
     assert 60 % interval == 0
     if not type(agg_df['czas']) is pd.datetime:
-        agg_df['czas'] = pd.to_datetime(agg_df['czas'])
+        agg_df['czas'] = pd.to_datetime(agg_df['czas'], utc=True)
 
     agg_df['czas'] = agg_df['czas'].dt.ceil(f'{interval}min')
     agg_df = agg_df.groupby(['czas']).mean().reset_index()
